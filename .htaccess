@@ -1,0 +1,31 @@
+Options -Indexes
+ErrorDocument 404 /404.html
+
+# Le dossier servi est un clone Git (déploiement Git OVH, branche publication) :
+# fichiers et dossiers cachés (.git, .gitignore…) jamais servis, sauf /.well-known/ (certificats).
+RedirectMatch 404 "/\.(?!well-known/)"
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  # HTTPS obligatoire. OVH : la détection fiable du HTTP clair passe par le port.
+  # /.well-known/ reste accessible pour la validation du certificat Let's Encrypt.
+  RewriteCond %{SERVER_PORT} ^80$
+  RewriteCond %{REQUEST_URI} !^/\.well-known/
+  RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
+  # www.electro-crea.com → electro-crea.com
+  RewriteCond %{HTTP_HOST} ^www\.electro-crea\.com$ [NC]
+  RewriteRule ^ https://electro-crea.com%{REQUEST_URI} [R=301,L]
+</IfModule>
+
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresByType text/html "access plus 0 seconds"
+</IfModule>
+<IfModule mod_headers.c>
+  # Fichiers générés par Astro : nom haché, donc cache permanent
+  <If "%{REQUEST_URI} =~ m#^/_astro/#">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </If>
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>
