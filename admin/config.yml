@@ -42,7 +42,7 @@ collections:
       - { name: title, label: Titre, widget: string }
       - { name: summary, label: Chapeau (une ou deux phrases), widget: text }
       - { name: rubrique, label: Rubrique, widget: select, default: projet, options: [{ label: Projet, value: projet }, { label: Réparation, value: reparation }, { label: Archive, value: archive }] }
-      - { name: theme, label: Thème, widget: select, options: [{ label: Instruments et son, value: son }, { label: Image et photo, value: photo }, { label: Art et installations, value: art }, { label: Hack, value: hack }, { label: Atelier, value: atelier }, { label: Maison, value: maison }, { label: Modélisme, value: vol }] }
+      - { name: theme, label: Thème, widget: relation, collection: themes, value_field: '{{slug}}', search_fields: [label], display_fields: [label], hint: 'Les thèmes se créent et se renomment dans la collection « Thèmes ».' }
       - { name: debut, label: Année de début, widget: number, value_type: int }
       - { name: fin, label: Année de fin, widget: number, value_type: int, required: false }
       - { name: statut, label: Statut, widget: select, default: terminé, options: [en cours, terminé, en pause, abandonné, régulier] }
@@ -111,6 +111,26 @@ collections:
       - { name: ordre, label: Ordre (plus petit = premier), widget: number, value_type: int, default: 100 }
       - { name: draft, label: Brouillon, widget: boolean, default: true }
       - { name: body, label: Récit, widget: markdown }
+
+  - name: themes
+    label: Thèmes
+    label_singular: Thème
+    description: >-
+      Classement des fiches sur la page Projets et l'accueil. Renommer un thème ne change rien aux fiches ; supprimer un
+      thème encore utilisé par une fiche fait échouer la publication (le site en ligne reste alors inchangé).
+    folder: src/content/themes
+    extension: yml
+    format: yml
+    create: true
+    delete: true
+    identifier_field: label
+    slug: '{{label}}'
+    sortable_fields: [ordre, label]
+    summary: '{{label}} — ordre {{ordre}}'
+    fields:
+      - { name: label, label: Nom, widget: string }
+      - { name: ligne, label: Phrase de présentation, widget: string }
+      - { name: ordre, label: Ordre (plus petit = premier), widget: number, value_type: int, default: 100 }
 
   - name: donnees
     label: Réglages
