@@ -6,6 +6,9 @@ backend:
   name: github
   repo: patrick-reybaud/electro-crea.com
   branch: main
+  # Connexion par jeton GitHub seulement : le bouton « Sign in with GitHub » passe par le service OAuth
+  # de Netlify, qui ne fonctionne pas hors de Netlify (page « Not Found »).
+  auth_methods: [token]
 
 locale: fr
 site_url: https://electro-crea.com
